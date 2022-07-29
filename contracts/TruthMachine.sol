@@ -4,14 +4,14 @@ pragma solidity ^0.8.0;
 
 import "./Ownable.sol";
 
-contract MaybeDoubler is Ownable {
-    event submit_Truth(string x);
+contract TruthMachine is Ownable {
+    event submit_Truth(uint id, string _title);
     event mint_Voters(address proleteriat);
-    event voteTruth(uint256 proposedTruthId, bool trueOrFalse);
-    event tallyVotesVerifyTruth(uint256 proposedTruthId, bool trueOrFalse);
-    event returnVotes(uint256 votes);
-    event viewTruth(uint256 proposedTruthId, bool trueOrFalse):
-    event viewTitle(string title);
+    event vote_Truth(uint256 proposedTruthId, bool trueOrFalse);
+    event tally_VotesVerifyTruth(uint256 proposedTruthId, bool trueOrFalse);
+    event return_Votes(uint256 votes);
+    event view_Truth(uint256 proposedTruthId, bool trueOrFalse);
+    event view_Title(string title);
 
     struct Truth {
         address who;
@@ -19,6 +19,7 @@ contract MaybeDoubler is Ownable {
         string title;
         bool trueResult;
         uint256 votes;
+        uint idNo;
     }
 
     Truth[] public truths;
@@ -28,7 +29,8 @@ contract MaybeDoubler is Ownable {
     
     mapping (uint => address) public voterList;
     mapping (address => bool) public voterBool;
-    mapping (uint => Truth) public truthList;
+    mapping (address => mapping (uint => bool)) public proposalRecord;
+
 
     modifier onlyVoter(address proleteriat) {
         require(voterBool[proleteriat] = true);
@@ -41,14 +43,37 @@ contract MaybeDoubler is Ownable {
     }
 
     function submitTruth(string memory _url, string memory _title) public returns (uint) {
-        uint256 id =  truths.push(Truth(msg.sender, _url, _title, false, 0);
-        truthList[id] = truths[id];
+        truths.push(Truth(msg.sender, _url, _title, false, 0, truthCount));
+        //truthList[id] = truths[id];
         truthCount++;
-        return id;
-        emit submit_Truth(memory);
+        emit submit_Truth(truthCount, _title);
+        return truthCount;
     }
 
-    function voteTruth() public onlyVoter(msg.sender) {
-        
+    function voteTruth(uint256 _id) external onlyVoter(msg.sender) {
+        Truth storage myTruth = truths[_id];
+        require(proposalRecord[msg.sender][_id] == false);
+        proposalRecord[msg.sender][_id] = true;
+        myTruth.votes++;
+    }
+
+    function tallyVotesVerifyTruth (uint256 _id) public {
+        Truth storage myTruth = truths[_id];
+        uint256 halfVoters = voterCount / 2;
+        if (myTruth.votes > halfVoters) {
+            myTruth.trueResult = true;
+        }
+    }
+    function returnVotes(uint256 _id) public view returns (uint256) {
+        Truth storage myTruth = truths[_id];
+        return myTruth.votes;
+    }
+    function returnTruth(uint256 _id) public view returns (bool) {
+        Truth storage myTruth = truths[_id];
+        return myTruth.trueResult;
+    }
+    function returnTitle(uint256 _id) public view returns (string memory) {
+        Truth storage myTruth = truths[_id];
+        return myTruth.title;
     }
 }
