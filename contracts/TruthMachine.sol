@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Practice Solidity Writing
+// Good learning exercise 
 pragma solidity ^0.8.0;
 
 import "./Ownable.sol";
