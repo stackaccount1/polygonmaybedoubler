@@ -6,5 +6,5 @@ from scripts.helpful_scripts import (
 
 def main():
     account = accounts.add(config["wallets"]["from_key"])
-    MB = "0xFFAF55E9538Fb9c6ABbecFe988c03C2B192175C1"
-    return MB.testCall({'from': account})
+    MB = "0xd7aFC96613c5f5a32040e5B9b1f5456fe46B4eb2"
+    return MB.returnBalance({'from': account})
